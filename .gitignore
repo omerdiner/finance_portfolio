@@ -237,5 +237,9 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 
-/data/user_financial_data/*.json
-/data/user_financial_data/*.csv
+/data/user_financial_data/currency_prices/*.json
+/data/user_financial_data/currency_prices/*.csv
+/data/user_financial_data/stock_prices/*.json
+/data/user_financial_data/stock_prices/*.csv
+/data/user_financial_data/gold_price/*.json
+/data/user_financial_data/gold_price/*.csv
