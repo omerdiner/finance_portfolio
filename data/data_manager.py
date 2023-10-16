@@ -9,11 +9,23 @@ def get_cwd():
     return dir_path.replace("\\", "/")
 
 
-def add_new_financial_data():
-    # Get data from API
+def get_current_prices():
     currency_prices = get_prices.get_currency_prices()
     stock_prices = get_prices.get_stock_prices()
     gold_price = get_prices.get_gold_price()
+
+    if currency_prices is None or stock_prices is None or gold_price is None:
+        print("Veri alınamadı.")
+        return
+
+    return currency_prices, stock_prices, gold_price
+
+
+def add_new_financial_data():
+    current_prices = get_current_prices()
+    currency_prices = current_prices[0]
+    stock_prices = current_prices[1]
+    gold_price = current_prices[2]
 
     if currency_prices is None or stock_prices is None or gold_price is None:
         print("Veri alınamadı.")
