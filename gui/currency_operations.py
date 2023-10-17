@@ -48,10 +48,11 @@ class CurrencyOperations:
             yval = bar.get_height()
             plt.text(bar.get_x() + bar.get_width()/2, yval,
                      str(amount), ha='center', va='bottom')
-
+        color_list = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral',
+                      'red', 'blue', 'green', 'yellow', 'orange', 'purple']
         plt.subplot(1, 2, 2)
         plt.pie(currency_total_values, labels=currency_codes, autopct='%1.1f%%',
-                startangle=140, colors=['yellowgreen', 'coral', 'lightskyblue'])
+                startangle=140, colors=color_list)
         plt.axis('equal')  # Daireyi dairesel yapar
         plt.title('Döviz Oransal Dağılımı')
 
