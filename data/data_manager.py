@@ -4,7 +4,7 @@ import datetime
 import os
 
 
-def get_cwd():
+def get_current_dir():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     return dir_path.replace("\\", "/")
 
@@ -55,7 +55,7 @@ def save_array_to_json(data, folder_path):
 
         current_datetime = datetime.datetime.now()
         formatted_datetime = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
-        cwd = get_cwd()
+        cwd = get_current_dir()
         file_name = f"{cwd}{folder_path}/{formatted_datetime}.json"
 
         with open(file_name, "w", encoding='utf8') as json_file:
@@ -70,15 +70,15 @@ def save_array_to_json(data, folder_path):
 
 
 def get_all_data_for_a_stock(stock_code):
-    cwd = get_cwd()
+    dir = get_current_dir()
     folder_path = "/financial_data/stock_prices"
-    file_names = os.listdir(f"{cwd}{folder_path}")
+    file_names = os.listdir(f"{dir}{folder_path}")
     file_names.sort()
 
     stock_data = []
 
     for file_name in file_names:
-        with open(f"{cwd}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
+        with open(f"{dir}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
             json_data = json_file.read()
             data = json.loads(json_data)
             for stock in data:
@@ -91,15 +91,15 @@ def get_all_data_for_a_stock(stock_code):
 
 
 def get_all_data_for_a_currency(currency_code):
-    cwd = get_cwd()
+    dir = get_current_dir()
     folder_path = "/financial_data/currency_prices"
-    file_names = os.listdir(f"{cwd}{folder_path}")
+    file_names = os.listdir(f"{dir}{folder_path}")
     file_names.sort()
 
     currency_data = []
 
     for file_name in file_names:
-        with open(f"{cwd}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
+        with open(f"{dir}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
             json_data = json_file.read()
             data = json.loads(json_data)
             for currency in data:
@@ -110,18 +110,21 @@ def get_all_data_for_a_currency(currency_code):
     return currency_data
 
 
-def get_all_data_for_gold():
-    cwd = get_cwd()
+def get_all_data_for_gold(name):
+    dir = get_current_dir()
     folder_path = "/financial_data/gold_price"
-    file_names = os.listdir(f"{cwd}{folder_path}")
+    file_names = os.listdir(f"{dir}{folder_path}")
     file_names.sort()
 
     gold_data = []
 
     for file_name in file_names:
-        with open(f"{cwd}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
+        with open(f"{dir}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
             json_data = json_file.read()
             data = json.loads(json_data)
-            gold_data.append(data)
+            for gold in data:
+                if gold["name"] == name:
+                    gold_data.append(gold)
+                    break
 
     return gold_data
