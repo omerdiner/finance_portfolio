@@ -9,7 +9,7 @@ def get_current_dir():
     return dir_path.replace("\\", "/")
 
 
-# gold data is a dictionary {"amount": amount, "avg_price": price, "type": type}
+# gold data is a dictionary {"name":name,"amount": amount}
 def get_user_gold_data():
     cwd = get_current_dir()
     file_name = "gold_data.json"
@@ -38,7 +38,7 @@ def get_user_currency_data():
 
 
 def update_user_gold_data(new_gold_data):
-    # new_gold_data = {"amount": amount, "avg_price": price, "type": type}
+    # new_gold_data = [{"name": name,"amount": amount}]
     cwd = get_current_dir()
     file_name = "gold_data.json"
     with open(f"{cwd}{folder_path}/{file_name}", "w", encoding='utf8') as json_file:
@@ -47,7 +47,7 @@ def update_user_gold_data(new_gold_data):
 
 def update_user_stock_data(new_stock_data):
     # new_stock_data is a list of dictionaries
-    # new_stock_data = [{"code": code, "name": name, "amount": amount, "avg_price": avg_price}]
+    # new_stock_data = [{"code": code,  "amount": amount}]
     cwd = get_current_dir()
     file_name = "stock_data.json"
     with open(f"{cwd}{folder_path}/{file_name}", "w", encoding='utf8') as json_file:
@@ -56,7 +56,7 @@ def update_user_stock_data(new_stock_data):
 
 def update_user_currency_data(new_currency_data):
     # new_currency_data is a list of dictionary
-    # new_currency_data = [{"code": code, "name": name, "amount": amount, "avg_price": avg_price}]
+    # new_currency_data = [{"code": code, "amount": amount}]
     cwd = get_current_dir()
     file_name = "currency_data.json"
     with open(f"{cwd}{folder_path}/{file_name}", "w", encoding='utf8') as json_file:
@@ -91,7 +91,7 @@ def update_stock_history(transaction):
 
 def update_gold_history(transaction):
     # transaction is a dictionary
-    #transaction = {"date": date, "amount": amount, "price": price, "total": total, "type": type, "note": note}
+    #transaction = {"date": date, "name":name,"amount": amount, "price": price, "total": total, "type": type, "note": note}
     cwd = get_current_dir()
     file_name = "gold_history.json"
     with open(f"{cwd}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
@@ -100,3 +100,6 @@ def update_gold_history(transaction):
         data.append(transaction)
     with open(f"{cwd}{folder_path}/{file_name}", "w", encoding='utf8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
+
+
+# TO-DO    GET_GOLD_HISTORY, GET_STOCK_HISTORY, GET_CURRENCY_HISTORY
