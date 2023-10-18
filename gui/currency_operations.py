@@ -5,8 +5,8 @@ import data.user_data_manager as user_data_manager
 
 class CurrencyOperations:
 
-    def __init__(self):
-        self.current_prices = data_manager.get_current_prices()[0]
+    def __init__(self, current_price_data):
+        self.current_prices = current_price_data[0]
 
     def calculate_total_amount_for_a_currency(self, currency_code, amount):
         for i in range(len(self.current_prices)):

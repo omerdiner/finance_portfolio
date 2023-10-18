@@ -4,8 +4,8 @@ import data.user_data_manager as user_data_manager
 
 
 class GoldOperations:
-    def __init__(self):
-        self.current_prices = data_manager.get_current_prices()[2]
+    def __init__(self, current_price_data):
+        self.current_prices = current_price_data[2]
 
     def calculate_total_amount_for_gold(self, amount):
         gold_price = self.current_prices[0]["buying"]*1000.0
