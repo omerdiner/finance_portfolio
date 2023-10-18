@@ -4,7 +4,7 @@ import json
 conn = http.client.HTTPSConnection("api.collectapi.com")
 headers = {
     'content-type': "application/json",
-    'authorization': "apikey 2MBeOiZ3cJIAcPtK730zWn:1LrUrqmwvnpBdrtRyOSzU8"
+    'authorization': "apikey 0XLv8qibx1Gl1F5PtgdUwv:3DrLrHcaw5eiDBlJkP5zZB"
 }
 
 
@@ -57,3 +57,11 @@ def get_gold_price():
     except json.JSONDecodeError as je:
         print("JSON çözme hatası oluştu:", je)
         return None
+
+
+def get_current_prices():
+    currency_prices = get_currency_prices()
+    stock_prices = get_stock_prices()
+    gold_price = get_gold_price()
+    current_prices = [currency_prices, stock_prices, gold_price]
+    return current_prices
