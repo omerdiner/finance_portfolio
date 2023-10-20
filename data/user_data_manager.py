@@ -102,4 +102,35 @@ def update_gold_history(transaction):
         json.dump(data, json_file, indent=4, ensure_ascii=False)
 
 
+def stock_operation(transaction):
+    # {"code": code, "quantity": quantity, "price": price, "transaction_type": transaction_type.get()}
+
+    code = transaction["code"]
+    quantity = transaction["quantity"]
+    transaction_type = transaction["transaction_type"]
+
+    user_stock_data = get_user_stock_data()
+
+    for stock in user_stock_data:
+        if stock["code"] == code:
+            if transaction_type == "Buy":
+                stock["amount"] = int(stock["amount"]) + int(quantity)
+            else:
+                if int(stock["amount"]) < int(quantity):
+                    return False
+                stock["amount"] = int(stock["amount"]) - int(quantity)
+                if int(stock["amount"]) == 0:
+                    user_stock_data.remove(stock)
+            update_user_stock_data(user_stock_data)
+            return True
+
+    if transaction_type == "Sell":
+        return False
+
+    new_stock = {"code": code, "amount": int(quantity)}
+    user_stock_data.append(new_stock)
+    update_user_stock_data(user_stock_data)
+    return True
+
+
 # TO-DO    GET_GOLD_HISTORY, GET_STOCK_HISTORY, GET_CURRENCY_HISTORY
