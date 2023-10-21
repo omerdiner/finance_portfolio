@@ -36,7 +36,7 @@ class MainInfoGui:
         tk.Button(button_frame, text="Portföy", command=self.portfolio_gui.show_portfolio, width=20, height=5).pack(
             side=tk.LEFT, padx=10, pady=10)
 
-        tk.Button(self.main_window, text="Anlık piyasa bilgisini kaydet.", command=data_manager.add_new_financial_data, width=20, height=5).pack(
+        tk.Button(self.main_window, text="Anlık piyasa bilgisini kaydet", command=data_manager.add_new_financial_data, width=20, height=5).pack(
             side=tk.BOTTOM, padx=10, pady=10)
 
         self.main_window.mainloop()
