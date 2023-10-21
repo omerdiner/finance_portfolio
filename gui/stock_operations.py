@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-import data.data_manager as data_manager
 import data.user_data_manager as user_data_manager
 
 
+# first plot needs to be fixed, the table is not showing properly all the data. there are too many stocks.
 class StockOperations:
     def __init__(self, current_price_data):
         self.current_prices = current_price_data[1]
@@ -34,19 +34,20 @@ class StockOperations:
         stock_total_values = [i[1] for i in total_stock_data.values()]
 
         total_portfolio_value = sum(stock_total_values)
+        total_portfolio_value = "{:.1f}".format(total_portfolio_value)
 
         plt.figure(figsize=(12, 6))
 
         plt.subplot(1, 2, 1)
         cell_text = []
         for i in range(len(stock_codes)):
+            formatted_stock_value = "{:.1f}".format(stock_total_values[i])
             cell_text.append(
-                [stock_codes[i], stock_amounts[i], stock_total_values[i]])
+                [stock_codes[i], stock_amounts[i], formatted_stock_value])
 
         table = plt.table(cellText=cell_text, colLabels=["Hisse Kodu", "Adet", "Toplam Tutar (TL)"],
                           cellLoc='center', loc='center', colColours=['#f3f3f3']*3, cellColours=[['#f9f9f9', '#f9f9f9', '#f9f9f9']]*len(stock_codes))
-        table.auto_set_font_size(False)
-        table.set_fontsize(12)
+        table.auto_set_font_size(True)
         table.auto_set_column_width(col=list(range(3)))
         table.scale(1, 2)
 
@@ -54,13 +55,13 @@ class StockOperations:
 
         plt.subplot(1, 2, 2)
         plt.axis('equal')
-        plt.rcParams['font.size'] = 12
+        plt.rcParams['font.size'] = 10
         plt.pie(stock_total_values, labels=stock_codes,
                 autopct='%1.1f%%', startangle=140, colors=plt.cm.Set3.colors)
         plt.title("Hisselerin Oransal Dağılımı")
 
         plt.figtext(
-            0.5, 0.02, f"Toplam Hisse Senedi Değeri: {total_portfolio_value} TL", ha='center', fontsize=14)
+            0.5, 0.02, f"Toplam Hisse Senedi Değeri: {total_portfolio_value} TL", ha='center', fontsize=12)
 
         plt.subplot(1, 2, 1)
         plt.gca().set_facecolor('#f2f2f2')

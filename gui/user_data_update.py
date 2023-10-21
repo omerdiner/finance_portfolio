@@ -4,6 +4,8 @@ import data.user_data_manager as user_data_manager
 import datetime
 
 
+# stock page needs to be refactored. there are too many stock data . they dont fit the screen
+
 class Exchange:
     def __init__(self, root):
         self.root = root
@@ -41,7 +43,7 @@ class Exchange:
             for index, item in enumerate(stock_data):
                 label_text = f"{item['code']} : {item['amount']} Adet"
                 label = tk.Label(stock_info_frame,
-                                 text=label_text, font=("Arial", 8))
+                                 text=label_text, font=("Arial", 6))
                 label.pack(pady=1)
         else:
             no_data_label = tk.Label(
