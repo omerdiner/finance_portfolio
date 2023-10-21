@@ -10,12 +10,12 @@ class MainPage(tk.Tk):
         self.title("Ana Sayfa")
         self.configure(bg="#E1D3D0")
         self.button_show_user_data = tk.Button(
-            self, text="Portföy Sayfası", command=self.show_user_portfolio, font=("Arial", 15), bd=5, relief=tk.GROOVE, width=50)
+            self, text="Portföy Görüntüle", command=self.show_user_portfolio, font=("Arial", 15), bd=5, relief=tk.GROOVE, width=50)
 
         self.button_show_user_data.pack(pady=50, padx=50)
 
         self.button_user_finance_operations = tk.Button(
-            self, text="Kullanıcı Sayfası", command=self.update_user_finance_data, font=("Arial", 15), bd=5, relief=tk.GROOVE, width=50)
+            self, text="İşlem Yap", command=self.update_user_finance_data, font=("Arial", 15), bd=5, relief=tk.GROOVE, width=50)
 
         self.button_user_finance_operations.pack(pady=50, padx=50)
 
