@@ -9,7 +9,6 @@ def get_current_dir():
     return dir_path.replace("\\", "/")
 
 
-# gold data is a dictionary {"name":name,"amount": amount}
 def get_user_gold_data():
     cwd = get_current_dir()
     file_name = "gold_data.json"
@@ -46,7 +45,6 @@ def update_user_gold_data(new_gold_data):
 
 
 def update_user_stock_data(new_stock_data):
-    # new_stock_data is a list of dictionaries
     # new_stock_data = [{"code": code,  "amount": amount}]
     cwd = get_current_dir()
     file_name = "stock_data.json"
@@ -55,7 +53,6 @@ def update_user_stock_data(new_stock_data):
 
 
 def update_user_currency_data(new_currency_data):
-    # new_currency_data is a list of dictionary
     # new_currency_data = [{"code": code, "amount": amount}]
     cwd = get_current_dir()
     file_name = "currency_data.json"
@@ -64,7 +61,7 @@ def update_user_currency_data(new_currency_data):
 
 
 def update_currency_history(transaction):
-    # transaction is a dictionary
+
     #transaction = {"date": date, "currency": currency, "amount": amount, "price": price, "total": total, "type": type,"note": note}
     cwd = get_current_dir()
     file_name = "currency_history.json"
@@ -77,7 +74,6 @@ def update_currency_history(transaction):
 
 
 def update_stock_history(transaction):
-    # transaction is a dictionary
     #transaction = {"date": date, "stock": stock, "amount": amount, "price": price, "total": total, "type": type, "note": note}
     cwd = get_current_dir()
     file_name = "stock_history.json"
@@ -90,7 +86,6 @@ def update_stock_history(transaction):
 
 
 def update_gold_history(transaction):
-    # transaction is a dictionary
     #transaction = {"date": date, "name":name,"amount": amount, "price": price, "total": total, "type": type, "note": note}
     cwd = get_current_dir()
     file_name = "gold_history.json"
@@ -132,5 +127,62 @@ def stock_operation(transaction):
     update_user_stock_data(user_stock_data)
     return True
 
+
+def currency_operation(transaction):
+    code = transaction["code"]
+    quantity = transaction["quantity"]
+    transaction_type = transaction["transaction_type"]
+
+    user_currency_data = get_user_currency_data()
+
+    for currency in user_currency_data:
+        if currency["code"] == code:
+            if transaction_type == "Buy":
+                currency["amount"] = int(currency["amount"])+int(quantity)
+            else:
+                if int(currency["amount"]) < int(quantity):
+                    return False
+                currency["amount"] = int(currency["amount"])-int(quantity)
+                if int(currency["amount"]) == 0:
+                    user_currency_data.remove(currency)
+            update_user_currency_data(user_currency_data)
+            return True
+
+    if transaction_type == "Sell":
+        return False
+
+    new_currency = {"code": code, "amount": int(quantity)}
+    user_currency_data.append(new_currency)
+    update_user_currency_data(user_currency_data)
+    return True
+
+
+def gold_operation(transaction):
+    name = transaction["name"]
+    quantity = transaction["quantity"]
+    transaction_type = transaction["transaction_type"]
+
+    user_gold_data = get_user_gold_data()
+
+    for gold in user_gold_data:
+        if gold["name"] == name:
+            if transaction_type == "Buy":
+                gold["amount"] = float(gold["amount"]) + float(quantity)
+            else:
+                if float(gold["amount"]) < float(quantity):
+                    return False
+                gold["amount"] = float(gold["amount"]) - float(quantity)
+                if float(gold["amount"]) == 0.0:
+                    user_gold_data.remove(gold)
+            update_user_gold_data(user_gold_data)
+            return True
+
+    if transaction_type == "Sell":
+        return False
+
+    new_gold = {"name": name, "amount": float(quantity)}
+    user_gold_data.append(new_gold)
+    update_user_gold_data(user_gold_data)
+    return True
 
 # TO-DO    GET_GOLD_HISTORY, GET_STOCK_HISTORY, GET_CURRENCY_HISTORY
