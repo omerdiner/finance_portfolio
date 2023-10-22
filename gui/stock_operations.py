@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import data.user_data_manager as user_data_manager
+import tkinter as tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from tkinter import ttk
 
 
-# first plot needs to be fixed, the table is not showing properly all the data. there are too many stocks.
 class StockOperations:
     def __init__(self, current_price_data):
         self.current_prices = current_price_data[1]
@@ -28,47 +30,67 @@ class StockOperations:
         return total_stock_data
 
     def show_stock_data(self):
+        root = tk.Tk()
+        root.title("Hisse Senedi Portföyü")
+
+        frame_left = ttk.Frame(root)
+        frame_left.pack(side=tk.LEFT, padx=10, pady=10)
+
+        table = ttk.Treeview(frame_left, columns=(
+            "Hisse Kodu", "Adet", "Toplam Fiyat"), show="headings")
+        table.heading("Hisse Kodu", text="Hisse Kodu")
+        table.heading("Adet", text="Adet")
+        table.heading("Toplam Fiyat", text="Toplam Fiyat")
+        table.pack(side=tk.TOP, fill=tk.Y)
+
         total_stock_data = self.all_stock_data()
+
         stock_codes = list(total_stock_data.keys())
         stock_amounts = [i[0] for i in total_stock_data.values()]
         stock_total_values = [i[1] for i in total_stock_data.values()]
 
-        total_portfolio_value = sum(stock_total_values)
-        total_portfolio_value = "{:.1f}".format(total_portfolio_value)
-
-        plt.figure(figsize=(12, 6))
-
-        plt.subplot(1, 2, 1)
-        cell_text = []
         for i in range(len(stock_codes)):
-            formatted_stock_value = "{:.1f}".format(stock_total_values[i])
-            cell_text.append(
-                [stock_codes[i], stock_amounts[i], formatted_stock_value])
+            formatted_total_value = "{:.2f}".format(stock_total_values[i])
+            table.insert("", "end", values=(
+                stock_codes[i], stock_amounts[i], formatted_total_value))
 
-        table = plt.table(cellText=cell_text, colLabels=["Hisse Kodu", "Adet", "Toplam Tutar (TL)"],
-                          cellLoc='center', loc='center', colColours=['#f3f3f3']*3, cellColours=[['#f9f9f9', '#f9f9f9', '#f9f9f9']]*len(stock_codes))
-        table.auto_set_font_size(True)
-        table.auto_set_column_width(col=list(range(3)))
-        table.scale(1, 2)
+        total_value = sum(stock_total_values)
+        total_value_label = tk.Label(
+            frame_left, text="Toplam Değer: {:.2f}".format(total_value))
+        total_value_label.pack(side=tk.BOTTOM)
+        total_value_label.config(font=("Courier", 20))
 
-        plt.title("Hisse Senedi Bilgileri")
+        frame_right = ttk.Frame(root)
+        frame_right.pack(side=tk.RIGHT, padx=10, pady=10)
 
-        plt.subplot(1, 2, 2)
-        plt.axis('equal')
-        plt.rcParams['font.size'] = 10
-        plt.pie(stock_total_values, labels=stock_codes,
-                autopct='%1.1f%%', startangle=140, colors=plt.cm.Set3.colors)
-        plt.title("Hisselerin Oransal Dağılımı")
+        fig, ax = plt.subplots()
+        ax.pie(stock_total_values, labels=stock_codes,
+               autopct='%1.1f%%', startangle=90)
+        i = 0
+        for text in ax.texts:
+            if i % 2 == 1:
+                t = text.get_text()
+                try:
+                    ratio = float(t[:-1])
+                except ValueError:
+                    ratio = 5
 
-        plt.figtext(
-            0.5, 0.02, f"Toplam Hisse Senedi Değeri: {total_portfolio_value} TL", ha='center', fontsize=12)
+                if ratio < 5:
+                    text.set_fontsize(5)
+                elif ratio < 7:
+                    text.set_fontsize(6)
+                elif ratio < 9:
+                    text.set_fontsize(7)
+                elif ratio < 10:
+                    text.set_fontsize(8)
+                else:
+                    text.set_fontsize(10)
+            else:
+                text.set_fontsize(7)
+            i += 1
 
-        plt.subplot(1, 2, 1)
-        plt.gca().set_facecolor('#f2f2f2')
-
-        plt.subplot(1, 2, 2)
-        plt.gca().set_facecolor('#f2f2f2')
-
-        plt.subplots_adjust(wspace=0.4)
-
-        plt.show()
+        ax.axis('equal')
+        canvas = FigureCanvasTkAgg(fig, master=frame_right)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        root.mainloop()
