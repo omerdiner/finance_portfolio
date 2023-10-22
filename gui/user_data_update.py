@@ -2,9 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import data.user_data_manager as user_data_manager
 import datetime
+import tkinter.ttk as ttk
 
-
-# stock page needs to be refactored. there are too many stock data . they dont fit the screen
 
 class Exchange:
     def __init__(self, root):
@@ -38,20 +37,31 @@ class Exchange:
 
         if stock_data:
             stock_info_frame = tk.Frame(stock_window)
-            stock_info_frame.pack(side=tk.LEFT, padx=50, pady=1)
+            stock_info_frame.pack(side=tk.LEFT)
 
-            for index, item in enumerate(stock_data):
-                label_text = f"{item['code']} : {item['amount']} Adet"
-                label = tk.Label(stock_info_frame,
-                                 text=label_text, font=("Arial", 6))
-                label.pack(pady=1)
+            columns = ("Hisse Kodu", "Adet")
+            tree = ttk.Treeview(
+                stock_info_frame, columns=columns, show="headings")
+            tree.heading("Hisse Kodu", text="Hisse Kodu")
+            tree.heading("Adet", text="Adet")
+
+            scrollbar = ttk.Scrollbar(
+                stock_info_frame, orient="vertical", command=tree.yview)
+            tree.configure(yscrollcommand=scrollbar.set)
+
+            tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+            for row in stock_data:
+                tree.insert("", "end", values=(row["code"], row["amount"]))
+
         else:
             no_data_label = tk.Label(
                 stock_window, text="Hisse bilgisi yok.", font=("Arial", 14))
             no_data_label.pack(pady=50)
 
         transaction_frame = tk.Frame(stock_window)
-        transaction_frame.pack(side=tk.RIGHT, padx=50, pady=10)
+        transaction_frame.pack(side=tk.RIGHT, padx=10, pady=10)
 
         label_code = tk.Label(transaction_frame, text="Hisse Kodu")
         label_code.pack()
@@ -79,6 +89,7 @@ class Exchange:
             quantity = entry_quantity.get()
             price = entry_price.get()
             buy_or_sell = transaction_type.get().strip().upper()
+
             if code == "" or quantity == "" or price == "" or buy_or_sell == "":
                 messagebox.showerror("Hata", "Tüm alanları doldur.")
                 return False
@@ -93,6 +104,7 @@ class Exchange:
                 messagebox.showerror(
                     "Hata", "Birim fiyat bilgisi sayı olmalıdır.")
                 return False
+
             if buy_or_sell != "AL" and buy_or_sell != "SAT":
                 messagebox.showerror("Hata", "Al/Sat alanı bilgisi yanlış.")
                 return False
