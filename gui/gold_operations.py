@@ -37,8 +37,9 @@ class GoldOperations:
         plt.subplot(1, 2, 1)
         cell_text = []
         for i in range(len(gold_types)):
+            formatted_total_value = "{:.2f}".format(gold_total_values[i])
             cell_text.append(
-                [gold_types[i], gold_amounts[i], gold_total_values[i]])
+                [gold_types[i], gold_amounts[i], formatted_total_value])
 
         table = plt.table(cellText=cell_text, colLabels=["Altın Tipi", "Adet", "Toplam Tutar (TL)"],
                           cellLoc='center', loc='center', colColours=gold_colors)
