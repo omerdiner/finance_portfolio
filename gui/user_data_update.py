@@ -9,23 +9,28 @@ class Exchange:
     def __init__(self, root):
         self.root = root
         self.root.title("Portföy Yönetimi")
-        self.root.geometry("400x500")
+        self.root.geometry("400x600")
 
         self.stock_button = tk.Button(
-            root, text="Hisse işlemleri", command=self.stock_page, width=20, height=5, font=("Arial", 14))
+            root, text="Hisse işlemleri", command=self.stock_page, width=15, height=5, font=("Arial", 14))
         self.stock_button.pack(pady=10)
 
         self.stock_button.config(relief=tk.RAISED, borderwidth=5)
 
         self.gold_button = tk.Button(
-            root, text="Altın İşlemleri", command=self.gold_page, width=20, height=5, font=("Arial", 14))
+            root, text="Altın İşlemleri", command=self.gold_page, width=15, height=5, font=("Arial", 14))
         self.gold_button.pack(pady=10)
         self.gold_button.config(relief=tk.RAISED, borderwidth=5)
 
         self.currency_button = tk.Button(
-            root, text="Döviz İşlemleri", command=self.currency_page, width=20, height=5, font=("Arial", 14))
+            root, text="Döviz İşlemleri", command=self.currency_page, width=15, height=5, font=("Arial", 14))
         self.currency_button.pack(pady=10)
         self.currency_button.config(relief=tk.RAISED, borderwidth=5)
+
+        self.crypto_button = tk.Button(
+            root, text="Kripto Para İşlemleri", command=self.crypto_page, width=15, height=5, font=("Arial", 14))
+        self.crypto_button.pack(pady=10)
+        self.crypto_button.config(relief=tk.RAISED, borderwidth=5)
 
     def stock_page(self):
         stock_window = tk.Toplevel(self.root)
@@ -321,6 +326,113 @@ class Exchange:
                 user_data_manager.update_currency_history(transaction_history)
                 messagebox.showinfo("Başarılı", "İşlem başarılı.")
                 currency_window.destroy()
+            else:
+                messagebox.showerror("Hata", "İşlem başarısız.")
+
+        transaction_button = tk.Button(
+            transaction_frame, text="İşlemi gerçekleştir", command=perform_transaction)
+        transaction_button.pack(pady=10)
+
+    def crypto_page(self):
+        crypto_window = tk.Toplevel(self.root)
+        crypto_window.title("HİSSE TAKİP")
+        crypto_window.geometry("600x400")
+        crypto_window.configure(bg="light blue")
+
+        crypto_data = user_data_manager.get_user_crypto_data()
+
+        if crypto_data:
+            crypto_info_frame = tk.Frame(crypto_window)
+            crypto_info_frame.pack(side=tk.LEFT)
+
+            columns = ("Kripto Kodu", "Adet")
+            tree = ttk.Treeview(
+                crypto_info_frame, columns=columns, show="headings")
+            tree.heading("Kripto Kodu", text="Kripto Kodu")
+            tree.heading("Adet", text="Adet")
+
+            scrollbar = ttk.Scrollbar(
+                crypto_info_frame, orient="vertical", command=tree.yview)
+            tree.configure(yscrollcommand=scrollbar.set)
+
+            tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+            for row in crypto_data:
+                tree.insert("", "end", values=(row["symbol"], row["amount"]))
+
+        else:
+            no_data_label = tk.Label(
+                crypto_window, text="Kripto bilgisi yok.", font=("Arial", 14))
+            no_data_label.pack(pady=50)
+
+        transaction_frame = tk.Frame(crypto_window)
+        transaction_frame.pack(side=tk.RIGHT, padx=10, pady=10)
+
+        label_code = tk.Label(transaction_frame, text="Kripto Kodu")
+        label_code.pack()
+        entry_code = tk.Entry(transaction_frame, width=20)
+        entry_code.pack()
+
+        label_quantity = tk.Label(transaction_frame, text="Adet")
+        label_quantity.pack()
+        entry_quantity = tk.Entry(transaction_frame, width=20)
+        entry_quantity.pack()
+
+        label_price = tk.Label(transaction_frame, text="Birim fiyat")
+        label_price.pack()
+        entry_price = tk.Entry(transaction_frame, width=20)
+        entry_price.pack()
+
+        label_type = tk.Label(transaction_frame, text="Al/Sat")
+        label_type.pack()
+        transaction_type = tk.Entry(transaction_frame, width=20)
+        transaction_type.insert(0, "AL")
+        transaction_type.pack()
+
+        def take_and_check_input():
+            symbol = entry_code.get().upper()
+            quantity = entry_quantity.get()
+            price = entry_price.get()
+            buy_or_sell = transaction_type.get().strip().upper()
+
+            if symbol == "" or quantity == "" or price == "" or buy_or_sell == "":
+                messagebox.showerror("Hata", "Tüm alanları doldur.")
+                return False
+
+            try:
+                quantity = float(quantity)
+            except:
+                messagebox.showerror("Hata", "Miktar sayı olmalıdır.")
+                return False
+
+            try:
+                price = float(price)
+            except:
+                messagebox.showerror(
+                    "Hata", "Birim fiyat bilgisi sayı olmalıdır.")
+                return False
+
+            if buy_or_sell != "AL" and buy_or_sell != "SAT":
+                messagebox.showerror("Hata", "Al/Sat alanı bilgisi yanlış.")
+                return False
+
+            buy_or_sell = "Sell" if buy_or_sell == "SAT" else "Buy"
+
+            return {"symbol": symbol, "quantity": quantity, "price": price, "transaction_type": buy_or_sell}
+
+        def perform_transaction():
+            transaction_data = take_and_check_input()
+            if not transaction_data:
+                messagebox.showerror("Hata", "Girilen bilgileri gözden geçir.")
+                return
+
+            if user_data_manager.crypto_operation(transaction_data):
+                transaction_history = {"date": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "symbol": transaction_data["symbol"], "amount": float(transaction_data["quantity"]), "price": float(transaction_data["price"]),
+                                       "total": float(transaction_data["price"]) * float(transaction_data["quantity"]), "type": transaction_data["transaction_type"], "note": ""}
+                user_data_manager.update_crypto_history(transaction_history)
+                messagebox.showinfo("Başarılı", "İşlem başarılı.")
+                crypto_window.destroy()
             else:
                 messagebox.showerror("Hata", "İşlem başarısız.")
 
