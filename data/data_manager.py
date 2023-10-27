@@ -10,15 +10,17 @@ def get_current_dir():
 
 
 def get_current_prices():
-    currency_prices = get_prices.get_currency_prices()
-    stock_prices = get_prices.get_stock_prices()
-    gold_price = get_prices.get_gold_price()
+    current_prices = get_prices.get_current_prices()
+    currency_prices = current_prices[0]
+    stock_prices = current_prices[1]
+    gold_price = current_prices[2]
+    crypto_prices = current_prices[3]
 
-    if currency_prices is None or stock_prices is None or gold_price is None:
+    if currency_prices is None or stock_prices is None or gold_price is None or crypto_prices is None:
         print("Veri alınamadı.")
         return
 
-    return currency_prices, stock_prices, gold_price
+    return currency_prices, stock_prices, gold_price, crypto_prices
 
 
 def add_new_financial_data():
@@ -26,13 +28,15 @@ def add_new_financial_data():
     currency_prices = current_prices[0]
     stock_prices = current_prices[1]
     gold_price = current_prices[2]
+    crypto_prices = current_prices[3]
 
-    if currency_prices is None or stock_prices is None or gold_price is None:
+    if currency_prices is None or stock_prices is None or gold_price is None or crypto_prices is None:
         print("Veri alınamadı.")
         return
     add_currency_prices(currency_prices)
     add_stock_prices(stock_prices)
     add_gold_price(gold_price)
+    add_crypto_prices(crypto_prices)
 
 
 def add_currency_prices(currency_prices):
@@ -46,6 +50,10 @@ def add_stock_prices(stock_prices):
 
 def add_gold_price(gold_price):
     save_array_to_json(gold_price, "/financial_data/gold_price")
+
+
+def add_crypto_prices(crypto_prices):
+    save_array_to_json(crypto_prices, "/financial_data/crypto_prices")
 
 
 def save_array_to_json(data, folder_path):
@@ -128,3 +136,23 @@ def get_all_data_for_gold(name):
                     break
 
     return gold_data
+
+
+def get_all_data_for_a_crypto(crypto_code):
+    dir = get_current_dir()
+    folder_path = "/financial_data/crypto_prices"
+    file_names = os.listdir(f"{dir}{folder_path}")
+    file_names.sort()
+
+    crypto_data = []
+
+    for file_name in file_names:
+        with open(f"{dir}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
+            json_data = json_file.read()
+            data = json.loads(json_data)
+            for crypto in data:
+                if crypto["symbol"] == crypto_code:
+                    crypto_data.append(crypto)
+                    break
+
+    return crypto_data

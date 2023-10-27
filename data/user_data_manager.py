@@ -36,6 +36,15 @@ def get_user_currency_data():
         return data
 
 
+def get_user_crypto_data():
+    current_dir = get_current_dir()
+    file_name = "crypto_data.json"
+    with open(f"{current_dir}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
+        json_data = json_file.read()
+        data = json.loads(json_data)
+        return data
+
+
 def update_user_gold_data(new_gold_data):
     # new_gold_data = [{"name": name,"amount": amount}]
     cwd = get_current_dir()
@@ -60,8 +69,15 @@ def update_user_currency_data(new_currency_data):
         json.dump(new_currency_data, json_file, indent=4, ensure_ascii=False)
 
 
-def update_currency_history(transaction):
+def update_user_crypto_data(new_crypto_data):
+    # new_crypto_data = [{"symbol": symbol, "amount": amount}]
+    cwd = get_current_dir()
+    file_name = "crypto_data.json"
+    with open(f"{cwd}{folder_path}/{file_name}", "w", encoding='utf8') as json_file:
+        json.dump(new_crypto_data, json_file, indent=4, ensure_ascii=False)
 
+
+def update_currency_history(transaction):
     #transaction = {"date": date, "currency": currency, "amount": amount, "price": price, "total": total, "type": type,"note": note}
     cwd = get_current_dir()
     file_name = "currency_history.json"
@@ -89,6 +105,18 @@ def update_gold_history(transaction):
     #transaction = {"date": date, "name":name,"amount": amount, "price": price, "total": total, "type": type, "note": note}
     cwd = get_current_dir()
     file_name = "gold_history.json"
+    with open(f"{cwd}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
+        json_data = json_file.read()
+        data = json.loads(json_data)
+        data.append(transaction)
+    with open(f"{cwd}{folder_path}/{file_name}", "w", encoding='utf8') as json_file:
+        json.dump(data, json_file, indent=4, ensure_ascii=False)
+
+
+def update_crypto_history(transaction):
+    #transaction = {"date": date, "symbol":symbol,"amount": amount, "price": price, "total": total, "type": type, "note": note}
+    cwd = get_current_dir()
+    file_name = "crypto_history.json"
     with open(f"{cwd}{folder_path}/{file_name}", "r", encoding='utf8') as json_file:
         json_data = json_file.read()
         data = json.loads(json_data)
@@ -184,5 +212,36 @@ def gold_operation(transaction):
     user_gold_data.append(new_gold)
     update_user_gold_data(user_gold_data)
     return True
+
+
+def crypto_operation(transaction):
+
+    symbol = transaction["symbol"]
+    quantity = transaction["quantity"]
+    transaction_type = transaction["transaction_type"]
+
+    user_crypto_data = get_user_crypto_data()
+
+    for crypto in user_crypto_data:
+        if crypto["symbol"] == symbol:
+            if transaction_type == "Buy":
+                crypto["amount"] = float(crypto["amount"]) + float(quantity)
+            else:
+                if float(crypto["amount"]) < float(quantity):
+                    return False
+                crypto["amount"] = float(crypto["amount"]) - float(quantity)
+                if float(crypto["amount"]) == 0.0:
+                    user_crypto_data.remove(crypto)
+            update_user_crypto_data(user_crypto_data)
+            return True
+
+    if transaction_type == "Sell":
+        return False
+
+    new_crypto = {"symbol": symbol, "amount": float(quantity)}
+    user_crypto_data.append(new_crypto)
+    update_user_crypto_data(user_crypto_data)
+    return True
+
 
 # TO-DO    GET_GOLD_HISTORY, GET_STOCK_HISTORY, GET_CURRENCY_HISTORY
