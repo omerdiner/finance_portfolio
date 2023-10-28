@@ -335,7 +335,7 @@ class Exchange:
 
     def crypto_page(self):
         crypto_window = tk.Toplevel(self.root)
-        crypto_window.title("HİSSE TAKİP")
+        crypto_window.title("KRİPTO PARA TAKİP")
         crypto_window.geometry("600x400")
         crypto_window.configure(bg="light blue")
 
