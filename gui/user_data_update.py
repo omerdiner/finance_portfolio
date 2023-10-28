@@ -139,7 +139,7 @@ class Exchange:
 
     def gold_page(self):
         gold_window = tk.Toplevel(self.root)
-        gold_window.title("Gold Tracker")
+        gold_window.title("ALTIN TAKİP")
         gold_window.geometry("600x400")
         gold_window.configure(bg="gold")
 
