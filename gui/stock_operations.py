@@ -44,10 +44,16 @@ class StockOperations:
         table.pack(side=tk.TOP, fill=tk.Y)
 
         total_stock_data = self.all_stock_data()
-
-        stock_codes = list(total_stock_data.keys())
-        stock_amounts = [i[0] for i in total_stock_data.values()]
-        stock_total_values = [i[1] for i in total_stock_data.values()]
+        #2.12.2024 tarihinden itibaren verilerin ekranda sıralı şekilde gözükmesi için aşağıdaki 10 satır kodu yazdım.
+        sorted_total_stock_data = dict(
+            sorted(total_stock_data.items(), key=lambda item: item[1][1], reverse=True))
+        
+        stock_codes = list(sorted_total_stock_data.keys())
+        stock_amounts = [sorted_total_stock_data[code][0]
+                         for code in stock_codes]
+        stock_total_values = [sorted_total_stock_data[code][1]
+                              for code in stock_codes]
+        
 
         for i in range(len(stock_codes)):
             formatted_total_value = "{:.2f}".format(stock_total_values[i])
