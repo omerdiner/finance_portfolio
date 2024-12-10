@@ -11,8 +11,7 @@ class CryptoOperations:
 
     def calculate_total_amount_for_a_crypto(self, crypto_code, amount):
         # api does not return data for these cryptos
-        unavailable_cryptos_from_api = {
-            'HOT': 0.03716, 'ENJ': 7.3435, 'LRC': 5.4253, 'ONE': 0.3127}
+        unavailable_cryptos_from_api = {'HOT': 0.1092,'CHZ':3.51}
 
         crypto_price = 0
         for i in range(len(self.current_prices)):
@@ -53,7 +52,10 @@ class CryptoOperations:
         table.pack(side=tk.TOP, fill=tk.Y)
 
         total_crypto_data = self.all_crypto_data()
-
+        
+        # SORT CRYPTO DATA BY TOTAL VALUE
+        total_crypto_data = dict(sorted(total_crypto_data.items(), key=lambda x: x[1][1], reverse=True))
+        
         crypto_codes = list(total_crypto_data.keys())
         crypto_amounts = [i[0] for i in total_crypto_data.values()]
         crypto_total_values = [i[1] for i in total_crypto_data.values()]
