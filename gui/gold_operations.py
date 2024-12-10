@@ -7,10 +7,19 @@ class GoldOperations:
     def __init__(self, current_price_data):
         self.current_prices = current_price_data[2]
 
-    def calculate_total_amount_for_gold(self, amount):
-        gold_price = self.current_prices[0]["buying"]*1000.0
+    def calculate_total_amount_for_gold(self, amount,type):
+        for i in range(len(self.current_prices)):
+            if self.current_prices[i]["name"] == type:
+                gold_price = self.current_prices[i]["buying"]
+                break
         total_amount = gold_price * amount
         return total_amount
+       # print(self.current_prices[0]["buying"])
+        ##gold_price = self.current_prices[0]["buying"]*1000.0
+        
+       
+       
+       
 
     def all_gold_data(self):
         gold_data = user_data_manager.get_user_gold_data()
@@ -18,7 +27,7 @@ class GoldOperations:
         for i in range(len(gold_data)):
             gold_type = gold_data[i]["name"]
             gold_amount = gold_data[i]["amount"]
-            total_amount = self.calculate_total_amount_for_gold(gold_amount)
+            total_amount = self.calculate_total_amount_for_gold(gold_amount, gold_type)
             total_gold_data[gold_type] = [gold_amount, total_amount]
         return total_gold_data
 
